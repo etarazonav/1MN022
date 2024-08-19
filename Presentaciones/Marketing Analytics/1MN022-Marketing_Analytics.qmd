@@ -72,6 +72,23 @@ library(fontawesome)
 ![](figuras\analitica.jpg)
 :::
 
+
+---
+
+## Evolución de los Métodos Analíticos
+
+**Historia del Análisis de Marketing**
+
+- **Inicios (1900s):** Comienzo de la recopilación sistemática de datos de mercado.
+- **Desarrollo (1950-1990):** Surgimiento de modelos estadísticos y econométricos.
+- **Era Digital (2000s en adelante):** Avances en big data, machine learning y análisis predictivo.
+
+---
+
+## Marketing Analytics: Línea de tiempo 
+
+![](figuras\MA_timeline.png){fig-align="center" width=90%}
+
 ---
 
 ## Big Data y Marketing
@@ -86,6 +103,34 @@ library(fontawesome)
 - Aún no está lo suficientemente claro qué tipos de análisis funcionan para qué tipos de problemas y datos,  o cómo las empresas deben evolucionar.
 
 :::
+
+---
+
+
+**Descripción:**
+- Revisión histórica de cómo han evolucionado los métodos analíticos en marketing.
+- Un gráfico simple que ilustre esta evolución.
+
+---
+
+## Importancia de los Datos
+
+**El Papel Central de los Datos**
+
+- **Volumen y Variedad:** El crecimiento exponencial de los datos disponibles.
+- **Datos estructurados vs. no estructurados:** Desafíos y oportunidades.
+
+---
+
+## Importancia de los Datos
+
+**Ciclo de Vida de los Datos en Marketing**
+
+- **Recopilación:** Captura de datos desde múltiples fuentes.
+- **Procesamiento:** Limpieza y preparación de datos.
+- **Análisis:** Aplicación de modelos para obtener insights.
+- **Implementación:** Uso de insights para la toma de decisiones.
+- **Evaluación:** Medición de resultados y ajustes.
 
 ---
 
@@ -113,22 +158,89 @@ library(fontawesome)
 El marketing mix es un conjunto de acciones y tácticas de marketing enfocadas en lograr el éxito de un producto o servicio, desde su desarrollo hasta su llegada al mercado o al punto de venta. Las 4Ps del marketing mix significan: Producto, precio, punto de venta y promoción.
 :::
 
+
 ---
 
-## Marketing Analytics: Línea de tiempo 
+## Optimización del Marketing Mix
 
-![](figuras\MA_timeline.png){fig-align="center" width=90%}
+**Asignación de Recursos**
+
+- **Definición:** Combinación de herramientas para alcanzar objetivos de marketing.
+- **Optimización:** Uso de análisis de datos para ajustar los elementos del mix.
+
+**Modelos Clásicos y Avances Recientes**
+
+- **Antes:** Técnicas simples de asignación de presupuestos.
+- **Ahora:** Modelos predictivos para la asignación óptima.
+
+---
+
+## Privacidad y Seguridad de los Datos
+
+**Desafíos en la Era del Big Data**
+
+- **Regulación:** Impacto de GDPR y otras leyes de privacidad.
+- **Ética en el manejo de datos:** Balance entre personalización y privacidad.
+
+**Medidas de Seguridad**
+
+- **Encriptación de datos:** Protección de datos sensibles.
+- **Anonimización:** Reducción de riesgos de violación de privacidad.
 
 ---
 
 ## Estado del arte y sus aplicaciones
 
 ![](figuras\MA_table1.png){fig-align="center" width=90%}
+
+---
+
+## Tendencias Futuras
+
+**Innovaciones en Análisis de Marketing**
+
+- **Inteligencia Artificial:** Modelos predictivos automatizados.
+- **Análisis en Tiempo Real:** Decisiones instantáneas basadas en datos frescos.
+- **Integración Multicanal:** Sincronización de datos en múltiples plataformas.
+
+---
+
+## Tendencias Futuras
+
+**Predicciones Futuras**
+
+- **Adopción de nuevas tecnologías:** Cómo cambiará el panorama del marketing.
+- **Privacidad vs. Personalización:** Tendencias regulatorias y expectativas del consumidor.
+
 ---
 
 ## Temas para futuras investigaciones
 
 ![](figuras\MA_table2.png){fig-align="center" width=90%}
+
+---
+
+## Conclusiones
+
+**Beneficios del Análisis de Marketing**
+
+::: {.incremental style="font-size : 100%"}
+- **Eficiencia:** Uso de datos para optimizar recursos y maximizar ROI.
+- **Adaptabilidad:** Capacidad de adaptación rápida a cambios en las preferencias de los consumidores.
+- **Competitividad:** Ventajas de una cultura de decisiones basadas en datos.
+:::
+
+---
+
+## Conclusiones
+
+**Impacto de la Educación**
+
+::: {.incremental style="font-size : 100%"}
+- **Formación en análisis de datos:** Necesidad de preparar a los profesionales para enfrentar desafíos futuros.
+- **Rol de las Instituciones Educativas:** Respuesta de la academia a las demandas del mercado.
+:::
+
 
 # Marketing Analytics y Ciencia de Datos {background="#43464B" background-image="figuras/fondo1.jpg"}
 
