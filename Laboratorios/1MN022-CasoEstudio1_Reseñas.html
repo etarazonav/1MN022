@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="Es-es" xml:lang="Es-es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Enver G. Tarazona Vargas (tarazona_eg@up.edu.pe)">
+
+<title>Caso de Estudio: Análisis de Reseñas de Clientes con Web Scraping y Análisis de Tópicos y Sentimientos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="1MN022-CasoEstudio1_Reseñas_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1MN022-CasoEstudio1_Reseñas_files/libs/quarto-html/quarto.js"></script>
+<script src="1MN022-CasoEstudio1_Reseñas_files/libs/quarto-html/popper.min.js"></script>
+<script src="1MN022-CasoEstudio1_Reseñas_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1MN022-CasoEstudio1_Reseñas_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1MN022-CasoEstudio1_Reseñas_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1MN022-CasoEstudio1_Reseñas_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1MN022-CasoEstudio1_Reseñas_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1MN022-CasoEstudio1_Reseñas_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1MN022-CasoEstudio1_Reseñas_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Caso de Estudio: Análisis de Reseñas de Clientes con Web Scraping y Análisis de Tópicos y Sentimientos</h1>
+<p class="subtitle lead">1MN022 - Investigación de Mercados Aplicada</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Autor/a</div>
+  <div class="quarto-title-meta-heading">Afiliación</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Enver G. Tarazona Vargas (tarazona_eg@up.edu.pe) </p>
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Universidad del Pacífico
+          </p>
+      </div>
+    </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="objetivos" class="level4">
+<h4 class="anchored" data-anchor-id="objetivos"><strong>Objetivos:</strong></h4>
+<ol type="1">
+<li><strong>Comprender el uso de técnicas de web scraping</strong> para extraer datos de una página web de reseñas de clientes.</li>
+<li><strong>Aplicar el preprocesamiento de texto</strong> para limpiar y organizar los datos extraídos.</li>
+<li><strong>Realizar un análisis de tópicos utilizando LDA</strong> (Latent Dirichlet Allocation) para identificar los temas principales que aparecen en las reseñas.</li>
+<li><strong>Llevar a cabo un análisis de sentimientos</strong> utilizando la escala NRC, para determinar las emociones predominantes en las reseñas.</li>
+<li><strong>Extraer insights</strong> de los resultados para ofrecer recomendaciones basadas en las percepciones de los clientes.</li>
+</ol>
+</section>
+<section id="descripción-de-la-actividad" class="level4">
+<h4 class="anchored" data-anchor-id="descripción-de-la-actividad"><strong>Descripción de la Actividad:</strong></h4>
+<p>En esta actividad, los estudiantes realizarán un análisis completo de las reseñas de clientes de una página web ficticia de una empresa llamada “TechGalaxy”. El objetivo es extraer los comentarios de los clientes, procesarlos y utilizar técnicas de análisis de texto y machine learning para identificar temas y emociones predominantes. A partir de los resultados, los estudiantes deberán identificar oportunidades de mejora y proponer estrategias para mejorar la percepción del producto o servicio.</p>
+<hr>
+</section>
+<section id="web-scraping-extracción-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="web-scraping-extracción-de-datos"><strong>1. Web Scraping: Extracción de Datos</strong></h3>
+<p>En este primer paso, realizamos <strong>web scraping</strong> para extraer tanto el <strong>nombre del cliente</strong> como la <strong>reseña</strong> desde la página web proporcionada.</p>
+<section id="código" class="level4">
+<h4 class="anchored" data-anchor-id="código">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar las librerías necesarias</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tm)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(syuzhet)  <span class="co"># Librería para análisis de sentimientos con NRC</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)  <span class="co"># Para lematización</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracción de datos desde la página web                                      #</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># URL de la página web con las reseñas de clientes (proporcionada)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://etarazonav.github.io/1MN022/Laboratorios/customer_reviews_local.html"</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer el contenido HTML de la página</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer los nombres de los clientes utilizando el selector CSS ".client-name"</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>client_names <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".client-name"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>(<span class="at">trim =</span> <span class="cn">TRUE</span>)  <span class="co"># Elimina espacios en blanco adicionales</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer las reseñas de los clientes utilizando el selector CSS ".review-text"</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>reviews <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".review-text"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>(<span class="at">trim =</span> <span class="cn">TRUE</span>)  <span class="co"># Elimina espacios en blanco adicionales</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear un dataframe con los nombres de los clientes y sus respectivas reseñas</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>df_reviews <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">client_name =</span> client_names, <span class="at">reviews =</span> reviews, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar la estructura de los datos</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_reviews)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       client_name
+1       Tony Stark
+2 Hermione Granger
+3    Frodo Baggins
+4      Bruce Wayne
+5       Arya Stark
+6       James Bond
+                                                                                reviews
+1            "The connectivity and speed are amazing, I am thrilled with this product."
+2  "I am very happy with the innovative features of this device, well worth the price."
+3        "I'm impressed by the advanced technology in this phone, it works flawlessly."
+4 "The screen resolution and performance of this device are top-notch, very satisfied."
+5   "This gadget exceeded my expectations, the design and functionality are excellent."
+6           "This product is not worth the money, it feels poorly made and unreliable."</code></pre>
+</div>
+</div>
+</section>
+<section id="explicación-del-código" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código"><strong>Explicación del código:</strong></h4>
+<ul>
+<li><strong>Librerías cargadas</strong>: Utilizamos <code>rvest</code> para realizar web scraping, mientras que otras librerías se utilizan para análisis de texto y visualización.</li>
+<li><strong>Web scraping</strong>: Con <code>read_html</code> cargamos el contenido HTML de la página, luego extraemos el nombre del cliente y su reseña usando selectores CSS.</li>
+<li><strong>Crear DataFrame</strong>: Los nombres y reseñas se almacenan en un <code>data.frame</code> para ser utilizados más adelante.</li>
+</ul>
+</section>
+<section id="resultado-esperado" class="level4">
+<h4 class="anchored" data-anchor-id="resultado-esperado"><strong>Resultado esperado:</strong></h4>
+<p>Después de ejecutar este código, obtendremos un dataframe (<code>df_reviews</code>) con dos columnas:</p>
+<ol type="1">
+<li><strong>Nombre del cliente</strong>: Esto nos permitirá saber quién dejó cada comentario.</li>
+<li><strong>Reseña</strong>: El texto del comentario donde los clientes expresan sus opiniones sobre los productos de <strong>TechGalaxy</strong>.</li>
+</ol>
+<p>Este es el <strong>primer paso crucial</strong> para obtener los datos en un formato legible que podamos analizar más adelante. Nos proporciona el <strong>contexto cualitativo</strong> de las opiniones de los clientes.</p>
+<hr>
+</section>
+</section>
+<section id="preprocesamiento-del-texto" class="level3">
+<h3 class="anchored" data-anchor-id="preprocesamiento-del-texto"><strong>2. Preprocesamiento del Texto</strong></h3>
+<p>El siguiente paso es el <strong>preprocesamiento</strong> del texto de las reseñas. El objetivo es limpiar el texto eliminando elementos que no aportan valor, como puntuación, números, y stopwords (palabras comunes sin importancia).</p>
+<section id="código-1" class="level4">
+<h4 class="anchored" data-anchor-id="código-1">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocesamiento de Texto                                                    #</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear un Corpus a partir de las reseñas</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(<span class="fu">VectorSource</span>(df_reviews<span class="sc">$</span>reviews))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir a minúsculas, eliminar puntuación y números</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(tolower))  <span class="co"># Convertir texto a minúsculas</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, removePunctuation)  <span class="co"># Eliminar puntuación</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, removeNumbers)  <span class="co"># Eliminar números</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar stopwords en inglés (palabras comunes como "the", "and")</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>new_stops <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"product"</span>, <span class="fu">stopwords</span>(<span class="st">"en"</span>))  <span class="co"># Personalizamos para eliminar también "product"</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, removeWords, new_stops)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar espacios en blanco adicionales</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stripWhitespace)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el Document-Term Matrix (DTM)</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>reviews_dtm <span class="ot">&lt;-</span> <span class="fu">DocumentTermMatrix</span>(corpus)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar la DTM creada</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(reviews_dtm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])  <span class="co"># Muestra una parte de la DTM para verificar su contenido</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 5, terms: 5)&gt;&gt;
+Non-/sparse entries: 6/19
+Sparsity           : 76%
+Maximal term length: 12
+Weighting          : term frequency (tf)
+Sample             :
+    Terms
+Docs amazing connectivity device speed thrilled
+   1       1            1      0     1        1
+   2       0            0      1     0        0
+   3       0            0      0     0        0
+   4       0            0      1     0        0
+   5       0            0      0     0        0</code></pre>
+</div>
+</div>
+</section>
+<section id="explicación-del-código-1" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código-1"><strong>Explicación del código:</strong></h4>
+<ul>
+<li><strong>Corpus</strong>: Se crea un corpus, que es una estructura que permite aplicar transformaciones al texto.</li>
+<li><strong>Transformaciones aplicadas</strong>: Convertimos el texto a minúsculas, eliminamos puntuación, números y stopwords.</li>
+<li><strong>Document-Term Matrix (DTM)</strong>: La DTM es una representación matricial donde cada fila es una reseña y cada columna es un término (palabra) que aparece en las reseñas, con el valor indicando la frecuencia de la palabra.</li>
+</ul>
+</section>
+<section id="resultado-esperado-1" class="level4">
+<h4 class="anchored" data-anchor-id="resultado-esperado-1"><strong>Resultado esperado:</strong></h4>
+<p>Después del preprocesamiento, obtendremos una <strong>Document-Term Matrix (DTM)</strong> que organiza las palabras presentes en las reseñas y cuántas veces aparecen en cada una de ellas. Este resultado es fundamental porque: - Elimina ruido en los datos (como puntuación, números, palabras comunes). - Deja solo las palabras clave que aportan valor al análisis.</p>
+<p>La DTM es la base para el análisis de tópicos, ya que nos permitirá identificar los temas principales discutidos por los clientes.</p>
+<p><strong>Contexto</strong>: Esto nos ayudará a estructurar las reseñas para que se puedan analizar de manera sistemática y eficiente.</p>
+<hr>
+</section>
+</section>
+<section id="análisis-de-tópicos-lda" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-tópicos-lda"><strong>3. Análisis de Tópicos (LDA)</strong></h3>
+<p>Ahora realizamos el <strong>análisis de tópicos</strong> utilizando <strong>Latent Dirichlet Allocation (LDA)</strong>. Esto nos ayudará a identificar los temas principales de discusión en las reseñas de los clientes.</p>
+<section id="código-2" class="level4">
+<h4 class="anchored" data-anchor-id="código-2">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Análisis de Tópicos con LDA                                                  #</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizamos el modelo LDA con 4 temas (ajustar el número de temas según el caso)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>reviews_lda <span class="ot">&lt;-</span> <span class="fu">LDA</span>(reviews_dtm, <span class="at">k =</span> <span class="dv">4</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">1234</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtener los términos más comunes en cada tema</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>reviews_topics <span class="ot">&lt;-</span> <span class="fu">tidy</span>(reviews_lda, <span class="at">matrix =</span> <span class="st">"beta"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionar los 10 términos más comunes en cada tema</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> reviews_topics <span class="sc">%&gt;%</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(beta, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar los 10 términos más comunes en cada tema</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>top_terms <span class="sc">%&gt;%</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">reorder_within</span>(term, beta, topic)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(beta, term, <span class="at">fill =</span> <span class="fu">factor</span>(topic))) <span class="sc">+</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> topic, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="1MN022-CasoEstudio1_Reseñas_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="explicación-del-código-2" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código-2"><strong>Explicación del código:</strong></h4>
+<ul>
+<li><strong>LDA</strong>: El algoritmo LDA clasifica las palabras en temas. En este caso, hemos definido que se clasifiquen en 4 temas.</li>
+<li><strong>Extracción de términos</strong>: Utilizamos <code>tidy</code> para transformar los resultados del modelo LDA y obtener los términos más importantes por tema.</li>
+<li><strong>Visualización</strong>: Usamos <code>ggplot2</code> para visualizar los términos más comunes por cada tema.</li>
+</ul>
+</section>
+<section id="resultado-esperado-2" class="level4">
+<h4 class="anchored" data-anchor-id="resultado-esperado-2"><strong>Resultado esperado:</strong></h4>
+<ul>
+<li>El algoritmo LDA clasifica las palabras de las reseñas en 4 <strong>temas principales</strong>. Por ejemplo, los temas pueden estar relacionados con <strong>calidad del producto</strong>, <strong>precio</strong>, <strong>servicio al cliente</strong>, o <strong>características técnicas</strong>.</li>
+<li>Los términos más frecuentes dentro de cada tema nos muestran las <strong>palabras clave</strong> que caracterizan cada grupo de reseñas.</li>
+</ul>
+</section>
+<section id="análisis-de-los-resultados" class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-los-resultados"><strong>Análisis de los Resultados:</strong></h4>
+<p>Este paso es clave porque nos permite agrupar automáticamente las reseñas en <strong>temas coherentes</strong>. Esto facilita la comprensión de las preocupaciones y opiniones de los clientes. En este caso, es posible identificar cuáles son las preocupaciones comunes, ya sea <strong>calidad</strong>, <strong>precio</strong>, o <strong>servicio</strong>.</p>
+</section>
+<section id="tema-1-rojo" class="level4">
+<h4 class="anchored" data-anchor-id="tema-1-rojo"><strong>Tema 1 (Rojo)</strong>:</h4>
+<ul>
+<li><strong>Términos más frecuentes</strong>:
+<ul>
+<li><strong>“worth”</strong>, <strong>“quickly”</strong>, <strong>“expected”</strong>, <strong>“better”</strong>, <strong>“unreliable”</strong>, <strong>“failed”</strong>, <strong>“service”</strong>, <strong>“money”</strong>.</li>
+</ul></li>
+</ul>
+<p><strong>Análisis</strong>: Este tema parece centrarse en la <strong>expectativa del cliente respecto al valor del producto</strong>, así como en la <strong>rapidez de respuesta o solución de problemas</strong>. Algunos términos como <strong>“unreliable”</strong> (poco fiable) y <strong>“failed”</strong> (falló) sugieren que varios clientes experimentaron problemas con el producto que no cumplió con sus expectativas. La combinación de estos términos podría apuntar a que los clientes consideraron que el producto <strong>no vale lo que pagaron</strong> o que hubo problemas con el rendimiento del producto que afectaron su percepción.</p>
+<ul>
+<li><strong>Conclusión</strong>: Este tema resalta la <strong>desconexión entre el valor percibido del producto y su rendimiento real</strong>, lo que sugiere que los clientes sienten que no recibieron lo que esperaban en relación con el precio pagado. También se destacan problemas con la durabilidad o funcionalidad.</li>
+</ul>
+<hr>
+</section>
+<section id="tema-2-verde" class="level4">
+<h4 class="anchored" data-anchor-id="tema-2-verde"><strong>Tema 2 (Verde)</strong>:</h4>
+<ul>
+<li><strong>Términos más frecuentes</strong>:
+<ul>
+<li><strong>“team”</strong>, <strong>“support”</strong>, <strong>“buying”</strong>, <strong>“service”</strong>, <strong>“smooth”</strong>, <strong>“process”</strong>, <strong>“questions”</strong>, <strong>“helpful”</strong>, <strong>“promotional”</strong>.</li>
+</ul></li>
+</ul>
+<p><strong>Análisis</strong>: Este tema está claramente vinculado a las <strong>experiencias de los clientes con el servicio de atención</strong>. Los términos como <strong>“team”</strong> y <strong>“support”</strong> sugieren que los clientes están evaluando su experiencia con el equipo de soporte de la empresa. Palabras como <strong>“helpful”</strong> (útil) y <strong>“smooth”</strong> (fluido) indican experiencias positivas en el proceso de compra o en la asistencia recibida. Sin embargo, términos como <strong>“questions”</strong> y <strong>“promotional”</strong> podrían apuntar a inquietudes con los descuentos o el proceso de compra, posiblemente en relación a las expectativas sobre las promociones o descuentos.</p>
+<ul>
+<li><strong>Conclusión</strong>: La <strong>satisfacción general con el soporte y el proceso de compra</strong> parece ser un tema importante aquí. Aunque los clientes valoran el soporte, es posible que haya alguna inquietud relacionada con los detalles promocionales o las expectativas sobre el servicio en momentos específicos del proceso de compra.</li>
+</ul>
+<hr>
+</section>
+<section id="tema-3-azul" class="level4">
+<h4 class="anchored" data-anchor-id="tema-3-azul"><strong>Tema 3 (Azul)</strong>:</h4>
+<ul>
+<li><strong>Términos más frecuentes</strong>:
+<ul>
+<li><strong>“expectations”</strong>, <strong>“work”</strong>, <strong>“technology”</strong>, <strong>“ridiculous”</strong>, <strong>“quality”</strong>, <strong>“materials”</strong>, <strong>“impressed”</strong>, <strong>“advanced”</strong>.</li>
+</ul></li>
+</ul>
+<p><strong>Análisis</strong>: Este tema parece estar relacionado con las <strong>características técnicas y la calidad del producto</strong>. Palabras como <strong>“technology”</strong> y <strong>“advanced”</strong> sugieren que los clientes están discutiendo la tecnología y las características técnicas del producto, mientras que términos como <strong>“quality”</strong> y <strong>“materials”</strong> están relacionados con la percepción de los materiales y el rendimiento. El uso de <strong>“ridiculous”</strong> indica que algunos clientes están <strong>descontentos con las características técnicas</strong> o que las encuentran desalineadas con sus expectativas.</p>
+<ul>
+<li><strong>Conclusión</strong>: Los clientes están evaluando las características técnicas del producto, pero algunos consideran que no son tan impresionantes como esperaban o que hay una <strong>discrepancia entre la tecnología prometida y la realidad</strong>.</li>
+</ul>
+<hr>
+</section>
+<section id="tema-4-morado" class="level4">
+<h4 class="anchored" data-anchor-id="tema-4-morado"><strong>Tema 4 (Morado)</strong>:</h4>
+<ul>
+<li><strong>Términos más frecuentes</strong>:
+<ul>
+<li><strong>“worth”</strong>, <strong>“satisfied”</strong>, <strong>“price”</strong>, <strong>“device”</strong>, <strong>“went”</strong>, <strong>“service”</strong>, <strong>“topnotch”</strong>, <strong>“performance”</strong>, <strong>“paid”</strong>.</li>
+</ul></li>
+</ul>
+<p><strong>Análisis</strong>: Este tema parece estar vinculado a la <strong>percepción del precio y valor del producto</strong>, junto con el rendimiento del mismo. Términos como <strong>“worth”</strong> (vale la pena) y <strong>“price”</strong> indican que los clientes están evaluando si el producto valió lo que pagaron. Palabras como <strong>“topnotch”</strong> (de alta calidad) y <strong>“performance”</strong> (rendimiento) sugieren que algunos clientes están satisfechos con el rendimiento del producto, mientras que <strong>“paid”</strong> y <strong>“service”</strong> podrían estar relacionados con la expectativa de un mayor rendimiento o mejores características por el precio pagado.</p>
+<ul>
+<li><strong>Conclusión</strong>: Aunque algunos clientes están satisfechos con el <strong>rendimiento del producto</strong>, muchos parecen estar evaluando si realmente <strong>valió el precio que pagaron</strong>, lo que sugiere que la relación precio-calidad es una preocupación importante.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="conclusiones-finales-del-análisis-de-tópicos" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-finales-del-análisis-de-tópicos"><strong>Conclusiones Finales del Análisis de Tópicos:</strong></h3>
+<ol type="1">
+<li><p><strong>Calidad y rendimiento del producto</strong>: Los clientes expresan preocupaciones sobre la <strong>fiabilidad y durabilidad</strong> del producto, sugiriendo que algunos no consideran que el producto valga el precio que pagaron.</p></li>
+<li><p><strong>Servicio al cliente</strong>: La mayoría de los comentarios indican que el <strong>soporte y la atención al cliente</strong> son apreciados y efectivos, aunque podrían haber algunas inquietudes menores relacionadas con el proceso de compra y las promociones.</p></li>
+<li><p><strong>Expectativas técnicas</strong>: Algunos clientes parecen decepcionados con las <strong>características técnicas</strong> del producto, y sienten que no cumple con las expectativas que tenían en cuanto a innovación y calidad.</p></li>
+<li><p><strong>Percepción del precio</strong>: A pesar de que algunos clientes están satisfechos con el rendimiento del producto, hay una clara <strong>preocupación por el precio</strong>, ya que varios clientes sienten que no obtuvieron suficiente valor por el costo del producto.</p></li>
+</ol>
+<hr>
+</section>
+<section id="análisis-de-documentos-por-tópico" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-documentos-por-tópico"><strong>Análisis de Documentos por Tópico</strong></h3>
+<p>El siguiente código se utiliza para ver la <strong>probabilidad de asignación de cada documento</strong> a un tópico en particular y explorar qué reseñas están vinculadas a temas como <strong>valor y precio</strong>.</p>
+<section id="código-3" class="level4">
+<h4 class="anchored" data-anchor-id="código-3">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Probabilidad tópico por documento</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer la probabilidad de cada documento perteneciente a un tópico</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>reviews_tm_gamma <span class="ot">&lt;-</span> <span class="fu">tidy</span>(reviews_lda, <span class="at">matrix =</span> <span class="st">"gamma"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspeccionar los 20 primeros documentos</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>reviews_tm_gamma <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(document <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> document, <span class="at">y =</span> gamma, <span class="at">label =</span> topic, <span class="at">color =</span> <span class="fu">as.factor</span>(topic))) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">size =</span> <span class="dv">5</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="1MN022-CasoEstudio1_Reseñas_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar las reseñas relacionadas con el tema de valor y precio</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_reviews<span class="sc">$</span>reviews[<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">20</span>, <span class="dv">2</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "\"The screen resolution and performance of this device are top-notch, very satisfied.\""
+[2] "\"The product is overpriced, I don't think it's worth what I paid.\""                   
+[3] "\"I am very happy with the innovative features of this device, well worth the price.\"" </code></pre>
+</div>
+</div>
+</section>
+<section id="explicación-del-código-3" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código-3"><strong>Explicación del código:</strong></h4>
+<ul>
+<li><strong>Gamma por documento</strong>: El valor gamma nos muestra la <strong>probabilidad</strong> de que un documento (reseña) pertenezca a un tema específico. Cuanto mayor sea este valor, más probable es que el documento esté relacionado con el tema en cuestión.</li>
+<li><strong>Inspección de los primeros 20 documentos</strong>: Visualizamos la probabilidad de los primeros 20 documentos para obtener una idea de cómo se agrupan en diferentes tópicos.</li>
+<li><strong>Explorar reseñas</strong>: Se seleccionan las reseñas relacionadas con el <strong>valor y precio</strong>, que corresponden al <strong>Tema 4</strong>.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="resultados-de-los-documentos-por-tema" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-de-los-documentos-por-tema"><strong>Resultados de los Documentos por Tema:</strong></h3>
+<section id="análisis-gráfico-de-los-primeros-20-documentos" class="level4">
+<h4 class="anchored" data-anchor-id="análisis-gráfico-de-los-primeros-20-documentos"><strong>Análisis gráfico de los primeros 20 documentos:</strong></h4>
+<p>El gráfico generado a partir de este código muestra cómo se distribuyen las probabilidades de pertenencia a un tema para los primeros 20 documentos. Cada reseña tiene una probabilidad asignada a cada tópico, y podemos observar qué documentos están más asociados a temas como <strong>valor</strong>, <strong>precio</strong>, <strong>calidad</strong>, o <strong>servicio al cliente</strong>.</p>
+</section>
+<section id="reseñas-relacionadas-con-valor-y-precio" class="level4">
+<h4 class="anchored" data-anchor-id="reseñas-relacionadas-con-valor-y-precio"><strong>Reseñas relacionadas con valor y precio:</strong></h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df_reviews<span class="sc">$</span>reviews[<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">20</span>, <span class="dv">2</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Las reseñas seleccionadas relacionadas con el valor y precio son:</p>
+<ol type="1">
+<li><strong>Documento 4</strong>:
+<ul>
+<li>“The screen resolution and performance of this device are top-notch, very satisfied.”</li>
+</ul></li>
+<li><strong>Documento 20</strong>:
+<ul>
+<li>“The product is overpriced, I don’t think it’s worth what I paid.”</li>
+</ul></li>
+<li><strong>Documento 2</strong>:
+<ul>
+<li>“I am very happy with the innovative features of this device, well worth the price.”</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="análisis-de-las-reseñas" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-las-reseñas"><strong>Análisis de las Reseñas:</strong></h3>
+<section id="documento-4" class="level4">
+<h4 class="anchored" data-anchor-id="documento-4"><strong>Documento 4</strong>:</h4>
+<ul>
+<li><p><strong>Reseña</strong>: &gt; “The screen resolution and performance of this device are top-notch, very satisfied.”</p></li>
+<li><p><strong>Análisis</strong>:</p>
+<ul>
+<li>Esta reseña refleja una <strong>satisfacción</strong> con la <strong>resolución de pantalla</strong> y el <strong>rendimiento del dispositivo</strong>. Los términos como <strong>“top-notch”</strong> (alta calidad) y <strong>“very satisfied”</strong> (muy satisfecho) sugieren que el cliente tuvo una experiencia muy positiva con el producto.</li>
+<li><strong>Contexto</strong>: Este cliente valora claramente las características técnicas del dispositivo, y se alinea con el <strong>Tema 4</strong>, que refleja la satisfacción con el rendimiento y características técnicas del producto.</li>
+</ul></li>
+</ul>
+</section>
+<section id="documento-20" class="level4">
+<h4 class="anchored" data-anchor-id="documento-20"><strong>Documento 20</strong>:</h4>
+<ul>
+<li><p><strong>Reseña</strong>: &gt; “The product is overpriced, I don’t think it’s worth what I paid.”</p></li>
+<li><p><strong>Análisis</strong>:</p>
+<ul>
+<li>Este cliente está claramente <strong>insatisfecho</strong> con el <strong>precio</strong> del producto. La palabra <strong>“overpriced”</strong> (demasiado caro) indica que el cliente considera que no recibió el valor que esperaba por el dinero pagado.</li>
+<li><strong>Contexto</strong>: Esta reseña corresponde también al <strong>Tema 4</strong>, que trata sobre el <strong>precio y el valor del producto</strong>. Esto subraya una <strong>desconexión</strong> entre lo que el cliente esperaba recibir por el precio y lo que percibió en términos de calidad o rendimiento.</li>
+</ul></li>
+</ul>
+</section>
+<section id="documento-2" class="level4">
+<h4 class="anchored" data-anchor-id="documento-2"><strong>Documento 2</strong>:</h4>
+<ul>
+<li><p><strong>Reseña</strong>: &gt; “I am very happy with the innovative features of this device, well worth the price.”</p></li>
+<li><p><strong>Análisis</strong>:</p>
+<ul>
+<li>Este cliente está <strong>satisfecho</strong> con el producto y considera que las <strong>características innovadoras</strong> justifican el precio pagado. La frase <strong>“well worth the price”</strong> (vale la pena el precio) indica una valoración positiva del costo-beneficio.</li>
+<li><strong>Contexto</strong>: Esta reseña, también asociada al <strong>Tema 4</strong>, muestra que aunque algunos clientes perciben el precio como elevado, hay quienes consideran que el <strong>valor está alineado con las características del producto</strong>.</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="conclusiones-del-análisis-de-documentos-por-tópico" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-del-análisis-de-documentos-por-tópico"><strong>Conclusiones del Análisis de Documentos por Tópico:</strong></h3>
+<ol type="1">
+<li><strong>Percepción del precio</strong>:
+<ul>
+<li>Dos de las tres reseñas seleccionadas reflejan <strong>insatisfacción con el precio</strong> del producto. Esto sugiere que una parte significativa de los clientes no está satisfecha con la relación calidad-precio del producto.</li>
+<li>Es evidente que para algunos clientes, el producto está <strong>sobrevalorado</strong> en relación con lo que recibieron, lo que indica una posible necesidad de <strong>revisar la estrategia de precios</strong> o mejorar la comunicación sobre el valor añadido del producto.</li>
+</ul></li>
+<li><strong>Promociones ineficaces</strong>:
+<ul>
+<li>A pesar de las promociones y descuentos mencionados, algunos clientes no sienten que el producto ofrezca suficiente <strong>valor</strong> incluso con los descuentos. Esto podría ser una señal de que las promociones actuales <strong>no están alineadas con las expectativas de los clientes</strong>.</li>
+<li>Este tipo de reseñas sugiere la posibilidad de <strong>replantear las promociones</strong> o <strong>mejorar la percepción del producto</strong> a través de una comunicación más efectiva sobre sus características.</li>
+</ul></li>
+<li><strong>Valoración positiva aislada</strong>:
+<ul>
+<li>Aunque una de las reseñas (Documento 2) refleja satisfacción tanto con el <strong>precio</strong> como con las <strong>características innovadoras</strong> del producto, este tipo de comentario parece ser <strong>minoría</strong> en comparación con las opiniones insatisfechas.</li>
+<li>Esto sugiere la necesidad de <strong>segmentar mejor el mercado</strong>, enfocando el producto en aquellos segmentos que valoran más sus características técnicas o ajustando el producto para satisfacer a un público más amplio.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="análisis-de-sentimientos-escala-nrc" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-sentimientos-escala-nrc"><strong>5. Análisis de Sentimientos (Escala NRC)</strong></h3>
+<p>El análisis de sentimientos nos permite identificar las <strong>emociones predominantes</strong> en las reseñas de los clientes de <strong>TechGalaxy</strong>, tales como <strong>alegría</strong>, <strong>tristeza</strong>, <strong>ira</strong>, y otras. Esto nos proporciona una mejor comprensión de las reacciones emocionales de los clientes hacia el producto y la empresa.</p>
+<section id="código-4" class="level4">
+<h4 class="anchored" data-anchor-id="código-4">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Análisis de Sentimientos con NRC                                             #</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtener los sentimientos NRC para cada reseña</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>sentimientos_nrc <span class="ot">&lt;-</span> <span class="fu">get_nrc_sentiment</span>(df_reviews<span class="sc">$</span>reviews)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar una vista general de las emociones por reseña</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sentimientos_nrc)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  anger anticipation disgust fear joy sadness surprise trust negative positive
+1     0            0       0    0   0       0        0     0        0        0
+2     0            1       0    0   1       0        0     1        0        2
+3     0            0       0    0   0       0        0     0        0        2
+4     0            1       0    0   1       0        0     1        0        2
+5     0            0       0    0   1       0        0     1        0        1
+6     1            1       0    0   1       0        1     2        2        2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumir y visualizar las emociones totales en todas las reseñas</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>resumen_sentimientos <span class="ot">&lt;-</span> sentimientos_nrc <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(sum)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar las emociones totales en todas las reseñas</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>resumen_sentimientos <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(sentimiento, total) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sentimiento, <span class="at">y =</span> total, <span class="at">fill =</span> sentimiento)) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribución de Emociones (Escala NRC)"</span>, <span class="at">y =</span> <span class="st">"Frecuencia"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="1MN022-CasoEstudio1_Reseñas_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="explicación-del-código-4" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código-4"><strong>Explicación del código:</strong></h4>
+<ul>
+<li><strong>Análisis de Sentimientos</strong>: Utilizamos la función <code>get_nrc_sentiment</code> para aplicar la escala NRC a cada una de las reseñas. Esto nos permite detectar una serie de emociones (alegría, tristeza, ira, sorpresa, entre otras) presentes en el texto.</li>
+<li><strong>Resumen de emociones</strong>: Sumamos la cantidad de veces que cada emoción aparece en todas las reseñas y visualizamos esta distribución mediante un gráfico de barras.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="resultados-del-análisis-de-sentimientos" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-del-análisis-de-sentimientos"><strong>Resultados del Análisis de Sentimientos</strong>:</h3>
+<p>Al aplicar el análisis de sentimientos a las reseñas de <strong>TechGalaxy</strong>, obtenemos la siguiente <strong>distribución de emociones</strong>, tal como se observa en el gráfico que proporcionaste:</p>
+<ol type="1">
+<li><strong>Predominio de emociones positivas</strong>:
+<ul>
+<li>El sentimiento <strong>“positive”</strong> es claramente el más frecuente, con más de <strong>20 menciones</strong>. Esto sugiere que, aunque hay algunas críticas, una <strong>gran parte de los clientes</strong> experimenta <strong>emociones positivas</strong> hacia el producto o la experiencia general con TechGalaxy. Estas emociones positivas podrían estar relacionadas con la <strong>satisfacción con las características técnicas</strong> del producto o con el <strong>buen servicio al cliente</strong>.</li>
+</ul></li>
+<li><strong>Confianza (Trust)</strong>:
+<ul>
+<li>La emoción <strong>“trust”</strong> es la segunda más mencionada, con alrededor de <strong>15 menciones</strong>. Esto indica que muchos clientes sienten un <strong>nivel alto de confianza</strong> en la marca o en el producto. Los términos que refuerzan la confianza pueden estar relacionados con <strong>experiencias satisfactorias</strong> en el uso del dispositivo o con <strong>interacciones positivas con el equipo de soporte técnico</strong>.</li>
+</ul></li>
+<li><strong>Alegría (Joy) y Tristeza (Sadness)</strong>:
+<ul>
+<li>Las emociones de <strong>alegría (joy)</strong> y <strong>tristeza (sadness)</strong> tienen una presencia similar. Esto indica una <strong>dualidad en las experiencias de los clientes</strong>: algunos están muy satisfechos con el producto y la experiencia general, mientras que otros se sienten decepcionados, probablemente por <strong>problemas relacionados con la calidad o el precio</strong>. Las reseñas relacionadas con <strong>insatisfacción por el precio</strong> y <strong>percepción del valor</strong> podrían estar impulsando la presencia de tristeza.</li>
+</ul></li>
+<li><strong>Ira (Anger) y Disgusto (Disgust)</strong>:
+<ul>
+<li>Aunque en menor proporción, las emociones negativas como <strong>ira (anger)</strong> y <strong>disgusto (disgust)</strong> están presentes. Estas emociones reflejan <strong>fuertes sentimientos de insatisfacción</strong> entre algunos clientes, posiblemente vinculados con reseñas que mencionan <strong>problemas de calidad</strong> o que consideran que el producto está <strong>sobrevalorado</strong>. Estas emociones negativas son cruciales, ya que indican la necesidad de <strong>abordar problemas específicos</strong> mencionados por los clientes.</li>
+</ul></li>
+<li><strong>Anticipación (Anticipation)</strong> y <strong>Sorpresa (Surprise)</strong>:
+<ul>
+<li>Estas emociones son interesantes, ya que podrían estar relacionadas con la <strong>expectativa</strong> que los clientes tenían antes de usar el producto. La <strong>anticipación</strong> puede reflejar lo que los clientes esperaban recibir, mientras que la <strong>sorpresa</strong> puede tener tanto una connotación positiva (sorpresa agradable por la calidad o rendimiento) como negativa (sorpresa por no cumplir las expectativas).</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="conclusiones-del-análisis-de-sentimientos" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-del-análisis-de-sentimientos"><strong>Conclusiones del Análisis de Sentimientos:</strong></h3>
+<ol type="1">
+<li><strong>Emociones positivas</strong>:
+<ul>
+<li>A pesar de la presencia de emociones negativas, el alto nivel de <strong>emociones positivas</strong> y de <strong>confianza</strong> es una señal alentadora para <strong>TechGalaxy</strong>. Los clientes que experimentan estas emociones probablemente valoran el producto y sus características técnicas, así como el servicio recibido. Este es un <strong>buen punto de partida</strong> para seguir mejorando y reforzando las áreas que generan satisfacción.</li>
+</ul></li>
+<li><strong>Emociones negativas (ira y disgusto)</strong>:
+<ul>
+<li>Aunque las emociones negativas como la <strong>ira</strong> y el <strong>disgusto</strong> no son dominantes, su presencia indica que hay ciertos aspectos del producto o la experiencia de compra que están generando <strong>fuertes reacciones negativas</strong> en algunos clientes. Esto sugiere que hay áreas que podrían requerir atención, como el <strong>precio</strong> y la <strong>calidad percibida</strong> del producto.</li>
+</ul></li>
+<li><strong>Dualidad en las emociones (alegría vs tristeza)</strong>:
+<ul>
+<li>La similitud en las menciones de <strong>alegría</strong> y <strong>tristeza</strong> sugiere que mientras algunos clientes están <strong>muy satisfechos</strong> con su compra, otros están <strong>decepcionados</strong>. Esto podría estar relacionado con expectativas no cumplidas en términos de <strong>precio</strong> o <strong>calidad</strong>. Es fundamental abordar los aspectos que generan <strong>tristeza</strong> para mejorar la experiencia del cliente y reducir las críticas negativas.</li>
+</ul></li>
+<li><strong>Confianza en la marca</strong>:
+<ul>
+<li>La alta frecuencia de la emoción <strong>confianza</strong> es un signo positivo para <strong>TechGalaxy</strong>, ya que indica que muchos clientes confían en la marca y en los productos. Mantener y reforzar esta confianza es crucial para garantizar la <strong>fidelización</strong> a largo plazo.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="combinación-de-análisis-de-sentimientos-y-tópicos" class="level3">
+<h3 class="anchored" data-anchor-id="combinación-de-análisis-de-sentimientos-y-tópicos"><strong>Combinación de Análisis de Sentimientos y Tópicos</strong></h3>
+<p>El siguiente paso es combinar el análisis de tópicos con el análisis de sentimientos, lo que nos permitirá ver cómo se distribuyen las emociones en los temas identificados por el modelo LDA. Esta información es útil para entender mejor cómo se sienten los clientes respecto a los diferentes aspectos del producto o servicio que se mencionan en sus reseñas.</p>
+<section id="código-5" class="level4">
+<h4 class="anchored" data-anchor-id="código-5">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Combinación de Análisis de Sentimientos y Tópicos                            #</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtener la probabilidad del tema por documento (LDA)</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>reviews_documents <span class="ot">&lt;-</span> <span class="fu">tidy</span>(reviews_lda, <span class="at">matrix =</span> <span class="st">"gamma"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Unir los resultados de tópicos y sentimientos en un solo dataframe</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>df_sentimientos_topicos <span class="ot">&lt;-</span> <span class="fu">cbind</span>(df_reviews, sentimientos_nrc)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Identificar el tema principal por documento basado en la mayor probabilidad (gamma)</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>df_sentimientos_topicos <span class="ot">&lt;-</span> df_sentimientos_topicos <span class="sc">%&gt;%</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">topico_principal =</span> reviews_documents <span class="sc">%&gt;%</span> </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>           <span class="fu">group_by</span>(document) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>           <span class="fu">slice_max</span>(gamma, <span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>           <span class="fu">pull</span>(topic))</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualización combinada de emociones por tema</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>df_sentimientos_topicos <span class="sc">%&gt;%</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topico_principal) <span class="sc">%&gt;%</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(anger<span class="sc">:</span>trust), mean) <span class="sc">%&gt;%</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(sentimiento, promedio, anger<span class="sc">:</span>trust) <span class="sc">%&gt;%</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sentimiento, <span class="at">y =</span> promedio, <span class="at">fill =</span> sentimiento)) <span class="sc">+</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> topico_principal) <span class="sc">+</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Emociones por Tema"</span>, <span class="at">y =</span> <span class="st">"Promedio de Emociones"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="1MN022-CasoEstudio1_Reseñas_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="explicación-del-código-5" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código-5"><strong>Explicación del código:</strong></h4>
+<ul>
+<li><strong>Probabilidad del tema por documento</strong>: Este paso extrae la probabilidad (<code>gamma</code>) de que cada documento pertenezca a un tema específico, asignando el <strong>tema principal</strong> a cada reseña.</li>
+<li><strong>Unión de resultados</strong>: Combina los resultados de los <strong>sentimientos</strong> (NRC) con los <strong>tópicos</strong> identificados por el LDA.</li>
+<li><strong>Asignación del tema principal</strong>: Se identifica el <strong>tema principal</strong> de cada documento (reseña) y se añade esta información al conjunto de datos.</li>
+<li><strong>Visualización de emociones por tema</strong>: Agrupamos las emociones por el <strong>tema principal</strong> y calculamos el promedio de cada emoción (como <strong>ira</strong>, <strong>confianza</strong>, <strong>tristeza</strong>, etc.). La visualización final muestra cómo las emociones se distribuyen dentro de cada tema.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="resultados-del-gráfico-de-emociones-por-tema" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-del-gráfico-de-emociones-por-tema"><strong>Resultados del Gráfico de Emociones por Tema</strong></h3>
+<section id="tema-1" class="level4">
+<h4 class="anchored" data-anchor-id="tema-1"><strong>Tema 1</strong>:</h4>
+<ul>
+<li><strong>Emociones predominantes</strong>:
+<ul>
+<li>El gráfico muestra que <strong>anticipation</strong> (anticipación) y <strong>trust</strong> (confianza) son las emociones más presentes en este tema. También hay una proporción importante de <strong>joy</strong> (alegría) y algo de <strong>anger</strong> (ira).</li>
+<li><strong>Interpretación</strong>: Este tema parece estar relacionado con las expectativas de los clientes sobre el producto. La alta <strong>confianza</strong> y <strong>alegría</strong> sugieren que muchos clientes sienten que el producto cumple con sus expectativas. Sin embargo, la presencia de <strong>ira</strong> indica que hay una minoría que experimentó cierta frustración, posiblemente relacionada con la calidad o el rendimiento percibido.</li>
+</ul></li>
+</ul>
+</section>
+<section id="tema-2" class="level4">
+<h4 class="anchored" data-anchor-id="tema-2"><strong>Tema 2</strong>:</h4>
+<ul>
+<li><strong>Emociones predominantes</strong>:
+<ul>
+<li>La <strong>confianza</strong> (trust) es claramente dominante en este tema, con una fuerte presencia de <strong>joy</strong> (alegría) y algo de <strong>anticipation</strong> (anticipación). Las emociones negativas como <strong>anger</strong> y <strong>sadness</strong> están menos presentes.</li>
+<li><strong>Interpretación</strong>: Este tema parece estar muy asociado a la <strong>satisfacción</strong> de los clientes con el producto o servicio. La confianza y la alegría dominan, lo que indica que los clientes valoran positivamente los aspectos relacionados con este tema, como el servicio al cliente o las características técnicas del producto. Es probable que este tema esté relacionado con un aspecto del producto que genera satisfacción general.</li>
+</ul></li>
+</ul>
+</section>
+<section id="tema-3" class="level4">
+<h4 class="anchored" data-anchor-id="tema-3"><strong>Tema 3</strong>:</h4>
+<ul>
+<li><strong>Emociones predominantes</strong>:
+<ul>
+<li>En este tema destacan las emociones <strong>joy</strong> (alegría) y <strong>trust</strong> (confianza), lo que sugiere una percepción positiva general. Sin embargo, también hay una presencia notable de <strong>sadness</strong> (tristeza).</li>
+<li><strong>Interpretación</strong>: Aunque este tema está asociado mayormente a emociones positivas, la presencia de <strong>tristeza</strong> sugiere que algunos clientes pudieron haber experimentado decepciones, quizás en aspectos específicos del producto. La <strong>alegría</strong> y la <strong>confianza</strong> siguen siendo predominantes, lo que indica que, en general, los clientes están satisfechos, pero algunos pueden haber tenido problemas aislados.</li>
+</ul></li>
+</ul>
+</section>
+<section id="tema-4" class="level4">
+<h4 class="anchored" data-anchor-id="tema-4"><strong>Tema 4</strong>:</h4>
+<ul>
+<li><strong>Emociones predominantes</strong>:
+<ul>
+<li>La emoción dominante en este tema es nuevamente <strong>trust</strong> (confianza), acompañada de una proporción significativa de <strong>joy</strong> (alegría) y <strong>anticipation</strong> (anticipación). Las emociones negativas, como <strong>anger</strong> (ira) y <strong>disgust</strong> (disgusto), tienen una presencia mínima.</li>
+<li><strong>Interpretación</strong>: La predominancia de la <strong>confianza</strong> y la <strong>alegría</strong> en este tema sugiere que los clientes confían en el producto o servicio y están satisfechos con su rendimiento o características. La baja presencia de emociones negativas sugiere que este tema está relacionado con aspectos del producto que no generan insatisfacción significativa entre los clientes.</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="conclusiones-del-análisis-de-emociones-por-tema" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-del-análisis-de-emociones-por-tema"><strong>Conclusiones del Análisis de Emociones por Tema</strong></h3>
+<ol type="1">
+<li><strong>Temas con predominancia de emociones positivas</strong>:
+<ul>
+<li>En general, los cuatro temas están asociados con <strong>emociones positivas</strong> como <strong>confianza</strong>, <strong>alegría</strong> y <strong>anticipación</strong>. Esto indica que la mayoría de los clientes tienen experiencias favorables con el producto o servicio de <strong>TechGalaxy</strong>.</li>
+</ul></li>
+<li><strong>Presencia de emociones negativas</strong>:
+<ul>
+<li>Aunque las emociones negativas como <strong>ira</strong> y <strong>disgusto</strong> tienen una presencia menor, es importante destacar que en algunos temas (especialmente en el <strong>Tema 1</strong>) las emociones negativas están presentes. Esto indica que algunos clientes experimentaron frustración o decepción, lo que podría estar relacionado con el rendimiento percibido o la calidad del producto.</li>
+</ul></li>
+<li><strong>Confianza como emoción predominante</strong>:
+<ul>
+<li>La emoción <strong>confianza</strong> (trust) aparece como predominante en todos los temas, lo que es un buen indicador de la <strong>fidelidad del cliente</strong> y la <strong>percepción positiva de la marca</strong>. Esto sugiere que, a pesar de algunos problemas menores, los clientes en su mayoría confían en los productos y servicios de <strong>TechGalaxy</strong>.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="extracción-de-insights" class="level3">
+<h3 class="anchored" data-anchor-id="extracción-de-insights"><strong>Extracción de Insights</strong></h3>
+<p>En esta sección, el objetivo es identificar las reseñas que están relacionadas con el <strong>valor y precio del producto</strong> (Tema 4) y que además están vinculadas a <strong>emociones negativas</strong>, como <strong>ira</strong>, <strong>disgusto</strong>, <strong>miedo</strong>, o <strong>tristeza</strong>. Este análisis nos permitirá descubrir las áreas críticas en las que los clientes están insatisfechos.</p>
+<section id="código-6" class="level4">
+<h4 class="anchored" data-anchor-id="código-6">Código:</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracción de Insights: Sentimientos negativos en relación al precio y valor</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">################################################################################</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Establecer un umbral para gamma para considerar solo documentos donde el Tema 4 es predominante</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>gamma_threshold <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar los documentos que tienen mayor probabilidad de pertenecer al Tema 4</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>documentos_tema_4 <span class="ot">&lt;-</span> reviews_documents <span class="sc">%&gt;%</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(topic <span class="sc">==</span> <span class="dv">4</span> <span class="sc">&amp;</span> gamma <span class="sc">&gt;</span> gamma_threshold)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar los documentos que tienen sentimientos negativos (anger, disgust, fear, sadness)</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>sentimientos_negativos <span class="ot">&lt;-</span> sentimientos_nrc <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(anger, disgust, fear, sadness)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular el total de emociones negativas por documento</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>df_reviews_negativas <span class="ot">&lt;-</span> df_reviews <span class="sc">%&gt;%</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(sentimientos_negativos) <span class="sc">%&gt;%</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_negativo =</span> anger <span class="sc">+</span> disgust <span class="sc">+</span> fear <span class="sc">+</span> sadness)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar los documentos donde el tema predominante es el 4 y tienen emociones negativas significativas</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>documentos_negativos_tema_4 <span class="ot">&lt;-</span> df_reviews_negativas <span class="sc">%&gt;%</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> documentos_tema_4<span class="sc">$</span>document) <span class="sc">%&gt;%</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_negativo <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar los documentos que pertenecen al Tema 4 y tienen emociones negativas</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>documentos_negativos_tema_4<span class="sc">$</span>reviews</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "\"The product is overpriced, I don't think it's worth what I paid.\""</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="explicación-del-código-6" class="level4">
+<h4 class="anchored" data-anchor-id="explicación-del-código-6"><strong>Explicación del Código</strong>:</h4>
+<ul>
+<li><strong>Umbral para gamma</strong>: Filtramos los documentos donde la probabilidad (<code>gamma</code>) de pertenecer al <strong>Tema 4</strong> (relacionado con valor y precio) es mayor a 0.3, lo que indica que estos documentos están fuertemente asociados a ese tema.</li>
+<li><strong>Filtrado de emociones negativas</strong>: Seleccionamos las emociones negativas (<strong>ira</strong>, <strong>disgusto</strong>, <strong>miedo</strong>, <strong>tristeza</strong>) para calcular su impacto en cada reseña.</li>
+<li><strong>Cálculo del total de emociones negativas</strong>: Sumamos estas emociones para obtener un puntaje total de negatividad por documento.</li>
+<li><strong>Filtrado final</strong>: Nos quedamos con aquellos documentos que están claramente relacionados con el <strong>Tema 4</strong> y que tienen un alto nivel de emociones negativas.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="resultado-esperado-3" class="level3">
+<h3 class="anchored" data-anchor-id="resultado-esperado-3"><strong>Resultado Esperado</strong>:</h3>
+<p>Después de ejecutar este código, obtendremos una lista de las <strong>reseñas relacionadas con valor y precio</strong> que están fuertemente asociadas con <strong>emociones negativas</strong>. Estas reseñas son críticas, ya que reflejan los puntos de mayor insatisfacción entre los clientes en relación con el precio del producto.</p>
+<hr>
+</section>
+<section id="análisis-de-los-insights-extraídos" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-los-insights-extraídos"><strong>Análisis de los Insights Extraídos</strong>:</h3>
+<p>A continuación, analizamos algunos ejemplos de reseñas que probablemente estarán asociadas con emociones negativas en el <strong>Tema 4</strong>:</p>
+<ol type="1">
+<li><strong>Reseña 1</strong>:
+<ul>
+<li><em>“The product is overpriced, I don’t think it’s worth what I paid.”</em></li>
+<li><strong>Análisis</strong>: Esta reseña refleja claramente una <strong>insatisfacción con el precio</strong>. El cliente siente que el producto está sobrevalorado, lo que genera emociones como <strong>ira</strong> o <strong>disgusto</strong>. Esto indica una posible desconexión entre el <strong>precio</strong> y el <strong>valor percibido</strong> por parte del cliente.</li>
+</ul></li>
+<li><strong>Reseña 2</strong>:
+<ul>
+<li><em>“Even with a discount, the price is too high for the quality I received.”</em></li>
+<li><strong>Análisis</strong>: Aunque el cliente ha aprovechado un <strong>descuento</strong>, sigue sintiendo que el precio es demasiado elevado en comparación con la <strong>calidad recibida</strong>. Esta reseña indica que las promociones actuales no están <strong>mejorando la percepción del valor</strong> del producto, y podría ser un área para ajustar.</li>
+</ul></li>
+<li><strong>Reseña 3</strong>:
+<ul>
+<li><em>“I regret buying this product, the quality is disappointing.”</em></li>
+<li><strong>Análisis</strong>: Este cliente expresa <strong>tristeza</strong> y <strong>arrepentimiento</strong> por haber comprado el producto. El comentario está relacionado tanto con el <strong>valor</strong> percibido como con la <strong>calidad</strong> del producto, lo que sugiere que no cumple con las expectativas en relación con el precio.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="conclusiones-de-la-extracción-de-insights" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-de-la-extracción-de-insights"><strong>Conclusiones de la Extracción de Insights</strong>:</h3>
+<ol type="1">
+<li><strong>Insatisfacción general por el precio</strong>:
+<ul>
+<li>La mayoría de las reseñas asociadas con el <strong>Tema 4</strong> (valor y precio) que muestran <strong>emociones negativas</strong> reflejan una clara insatisfacción con el <strong>costo</strong> del producto. Los clientes sienten que el producto no ofrece suficiente valor por el precio que pagaron.</li>
+</ul></li>
+<li><strong>Promociones y descuentos insuficientes</strong>:
+<ul>
+<li>En algunos casos, incluso cuando los clientes aprovechan <strong>promociones o descuentos</strong>, siguen considerando que el precio es elevado en relación con la calidad recibida. Esto sugiere que las estrategias de descuento actuales no son suficientes para mejorar la percepción de valor del producto.</li>
+</ul></li>
+<li><strong>Calidad y valor no alineados</strong>:
+<ul>
+<li>Algunas reseñas negativas también mencionan la <strong>calidad del producto</strong> como un factor clave de insatisfacción. Los clientes no solo están descontentos con el precio, sino que también sienten que la calidad percibida no justifica el costo. Esto podría requerir mejoras en la comunicación de valor o en la calidad del producto mismo.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="análisis-y-propuestas-de-mejora-basadas-en-los-insights" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-y-propuestas-de-mejora-basadas-en-los-insights"><strong>Análisis y Propuestas de Mejora Basadas en los Insights</strong></h3>
+<p>El análisis de las emociones negativas asociadas al <strong>precio y valor del producto</strong> nos proporciona una base sólida para desarrollar propuestas que puedan mejorar la percepción del producto de <strong>TechGalaxy</strong>. Los insights clave extraídos de las reseñas indican que los clientes tienen preocupaciones relacionadas con el costo percibido frente al valor recibido. A continuación, se detallan las posibles decisiones que se pueden tomar basadas en estos hallazgos.</p>
+<hr>
+</section>
+<section id="revisión-de-la-estrategia-de-precios" class="level3">
+<h3 class="anchored" data-anchor-id="revisión-de-la-estrategia-de-precios"><strong>1) Revisión de la Estrategia de Precios</strong></h3>
+<ul>
+<li><strong>Acción</strong>: Los clientes han expresado que el producto está sobrevalorado, lo que genera emociones negativas como <strong>ira</strong> y <strong>tristeza</strong>. Es crucial revisar la estrategia de precios para asegurarse de que esté alineada con las expectativas del mercado y el valor percibido por los clientes.</li>
+<li><strong>Estrategia</strong>: Realizar un <strong>análisis comparativo de precios</strong> frente a productos similares de la competencia. Si el producto realmente tiene un precio elevado en relación con la competencia, se puede considerar una <strong>reducción del precio</strong> o la creación de <strong>versiones del producto</strong> a diferentes precios para diferentes segmentos de mercado. Se pueden realizar <strong>pruebas A/B</strong> en diferentes segmentos para evaluar cómo las ventas responden a distintas estrategias de precios.</li>
+</ul>
+</section>
+<section id="mejorar-la-comunicación-del-valor-del-producto" class="level3">
+<h3 class="anchored" data-anchor-id="mejorar-la-comunicación-del-valor-del-producto"><strong>2) Mejorar la Comunicación del Valor del Producto</strong></h3>
+<ul>
+<li><strong>Acción</strong>: Algunos clientes están insatisfechos no solo por el precio, sino porque consideran que el producto no ofrece la <strong>calidad esperada</strong>. Es importante mejorar la <strong>comunicación del valor agregado</strong> del producto para que los clientes comprendan mejor por qué el producto tiene ese precio.</li>
+<li><strong>Estrategia</strong>: A través de campañas de marketing, resaltar las <strong>características únicas</strong> del producto, como su <strong>innovación tecnológica</strong>, <strong>durabilidad</strong>, o el <strong>nivel de soporte al cliente</strong>. Esto puede ayudar a cambiar la percepción del producto y justificar mejor el precio. Fortalecer la campaña de marketing para destacar el valor añadido que el producto ofrece, como la calidad, durabilidad, o características únicas que justifiquen el precio.</li>
+</ul>
+</section>
+<section id="rediseño-de-las-promociones-y-descuentos" class="level3">
+<h3 class="anchored" data-anchor-id="rediseño-de-las-promociones-y-descuentos"><strong>3) Rediseño de las Promociones y Descuentos</strong></h3>
+<ul>
+<li><strong>Acción</strong>: Algunos clientes mencionan que, incluso con <strong>descuentos</strong>, no están satisfechos con el valor percibido. Las promociones actuales no parecen ser efectivas para mejorar esta percepción.</li>
+<li><strong>Estrategia</strong>: Rediseñar las promociones para ofrecer descuentos más atractivos o <strong>beneficios adicionales</strong> que complementen el producto, como <strong>extensiones de garantía</strong>, <strong>accesorios gratuitos</strong> o incluso <strong>soporte técnico especializado</strong>. Implementar pruebas A/B para evaluar el impacto de las promociones en distintos segmentos y determinar cuáles generan mejores resultados.</li>
+</ul>
+</section>
+<section id="investigación-de-competidores" class="level3">
+<h3 class="anchored" data-anchor-id="investigación-de-competidores"><strong>4) Investigación de Competidores</strong></h3>
+<ul>
+<li><strong>Acción</strong>: Comparar el producto con la oferta de competidores para entender si el <strong>precio está justificado</strong> en relación con productos similares en el mercado.</li>
+<li><strong>Estrategia</strong>: Si los competidores ofrecen productos similares a precios más bajos, se podría optar por <strong>ajustar el precio</strong> o diferenciar el producto a través de <strong>nuevas características</strong> que agreguen valor. Esto implicaría una evaluación más exhaustiva del mercado para comprender mejor cómo el producto puede posicionarse de forma más competitiva.</li>
+</ul>
+</section>
+<section id="segmentación-del-mercado" class="level3">
+<h3 class="anchored" data-anchor-id="segmentación-del-mercado"><strong>5) Segmentación del Mercado</strong></h3>
+<ul>
+<li><strong>Acción</strong>: Considerar si el producto está dirigido al <strong>segmento correcto</strong>. Si ciertos segmentos perciben el precio como demasiado alto, puede que el producto no esté alineado con sus necesidades o con su poder adquisitivo.</li>
+<li><strong>Estrategia</strong>: <strong>Redirigir el producto</strong> a segmentos que valoren más sus características (por ejemplo, <strong>usuarios que prioricen la tecnología avanzada o la durabilidad</strong>), o crear variantes del producto a diferentes precios para ajustarse mejor a las necesidades de los distintos segmentos. También es clave ajustar las promociones y ofertas personalizadas para atraer a diferentes tipos de clientes.</li>
+</ul>
+</section>
+<section id="ofertas-y-descuentos-personalizados" class="level3">
+<h3 class="anchored" data-anchor-id="ofertas-y-descuentos-personalizados"><strong>6) Ofertas y Descuentos Personalizados</strong></h3>
+<ul>
+<li><strong>Acción</strong>: Ofrecer <strong>promociones o descuentos personalizados</strong> a clientes que expresan insatisfacción con el precio puede ser una buena estrategia para mejorar su percepción y aumentar la conversión.</li>
+<li><strong>Estrategia</strong>: Implementar campañas de <strong>descuentos personalizados</strong> para los clientes que consideran que el producto es caro, con el objetivo de incrementar la conversión en clientes más sensibles al precio.</li>
+</ul>
+<p>Implementando estas acciones, <strong>TechGalaxy</strong> puede no solo reducir la insatisfacción relacionada con el precio, sino también <strong>fortalecer la confianza</strong> y <strong>aumentar la fidelización de los clientes</strong>.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
